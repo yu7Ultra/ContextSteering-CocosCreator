@@ -1,21 +1,18 @@
-import { _decorator, Component, Vec3, Node, v3 } from 'cc';
-const { ccclass, property } = _decorator;
+import { Component, Vec3, Node, v3 } from './cc-mock';
 
-@ccclass('Agent')
 export class Agent extends Component {
-    @property
-    maxSpeed: number = 200;
-    
-    @property
-    maxForce: number = 100;
-    
-    @property
-    radius: number = 20;
+    public maxSpeed: number = 200;
+    public maxForce: number = 100;
+    public radius: number = 20;
 
     private velocity: Vec3 = v3(0, 0, 0);
     private contextMapSize: number = 16;
     private contextMap: number[] = [];
     private dangerMap: number[] = [];
+    
+    public getVelocity(): Vec3 {
+        return this.velocity.clone();
+    }
     
     start() {
         // Initialize arrays

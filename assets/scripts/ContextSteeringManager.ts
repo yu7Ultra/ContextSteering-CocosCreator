@@ -1,17 +1,10 @@
-import { _decorator, Component, Node, Prefab, instantiate, Vec3, v3, Color, Graphics, UITransform } from 'cc';
+import { Component, Node, Prefab, instantiate, Vec3, v3, Color, Graphics, UITransform } from './cc-mock';
 import { Agent } from './Agent';
-const { ccclass, property } = _decorator;
 
-@ccclass('ContextSteeringManager')
 export class ContextSteeringManager extends Component {
-    @property(Prefab)
-    agentPrefab: Prefab = null;
-    
-    @property
-    numberOfAgents: number = 5;
-    
-    @property
-    numberOfObstacles: number = 3;
+    public agentPrefab: Prefab | null = null;
+    public numberOfAgents: number = 5;
+    public numberOfObstacles: number = 3;
 
     private agents: Node[] = [];
     private obstacles: Node[] = [];
@@ -119,8 +112,8 @@ export class ContextSteeringManager extends Component {
         // Update agent direction indicators
         for (const agentNode of this.agents) {
             const agentComp = agentNode.getComponent(Agent);
-            if (agentComp && agentComp['velocity']) {
-                const vel = agentComp['velocity'] as Vec3;
+            if (agentComp) {
+                const vel = agentComp.getVelocity();
                 if (vel.lengthSqr() > 0) {
                     const angle = Math.atan2(vel.y, vel.x);
                     agentNode.angle = -angle * 180 / Math.PI; // Convert to degrees and apply
