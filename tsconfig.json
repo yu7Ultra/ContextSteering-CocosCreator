@@ -6,6 +6,8 @@
     "lib": ["ES2017", "DOM"],
     "moduleResolution": "node",
     "skipLibCheck": true,
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true
   }
 }
