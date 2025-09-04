@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Context Steering Demo</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background: #2c3e50;
+            color: white;
+        }
+        #canvas {
+            border: 2px solid #34495e;
+            background: #34495e;
+            display: block;
+            margin: 20px auto;
+        }
+        .controls {
+            text-align: center;
+            margin: 20px;
+        }
+        .info {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        button:hover {
+            background: #2980b9;
+        }
+    </style>
+</head>
+<body>
+    <div class="info">
+        <h1>Context Steering Demonstration</h1>
+        <p>This demo shows autonomous agents using context steering for navigation and obstacle avoidance.</p>
+        <p><strong>Red circles</strong> are obstacles, <strong>colored circles</strong> are agents that steer around obstacles.</p>
+    </div>
+    
+    <canvas id="canvas" width="800" height="600"></canvas>
+    
+    <div class="controls">
+        <button onclick="addAgent()">Add Agent</button>
+        <button onclick="addObstacle()">Add Obstacle</button>
+        <button onclick="clearAll()">Clear All</button>
+        <button onclick="resetDemo()">Reset Demo</button>
+    </div>
+
+    <script>
+        // Simple context steering demo implementation
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        let agents = [];
+        let obstacles = [];
+        let animationId;
+
+        class Vec2 {
+            constructor(x = 0, y = 0) {
+                this.x = x;
+                this.y = y;
+            }
+
+            length() {
+                return Math.sqrt(this.x * this.x + this.y * this.y);
+            }
+
+            normalize() {
+                const len = this.length();
+                if (len > 0) {
+                    this.x /= len;
+                    this.y /= len;
+                }
+                return this;
+            }
+
+            add(other) {
+                this.x += other.x;
+                this.y += other.y;
+                return this;
+            }
+
+            multiply(scalar) {
+                this.x *= scalar;
+                this.y *= scalar;
+                return this;
+            }
+
+            clone() {
+                return new Vec2(this.x, this.y);
+            }
+
+            static dot(a, b) {
+                return a.x * b.x + a.y * b.y;
+            }
+
+            static distance(a, b) {
+                const dx = a.x - b.x;
+                const dy = a.y - b.y;
+                return Math.sqrt(dx * dx + dy * dy);
+            }
+        }
+
+        class Agent {
+            constructor(x, y) {
+                this.position = new Vec2(x, y);
+                this.velocity = new Vec2(Math.random() - 0.5, Math.random() - 0.5).normalize().multiply(50);
+                this.maxSpeed = 80 + Math.random() * 40;
+                this.radius = 8 + Math.random() * 4;
+                this.contextMapSize = 16;
+                this.color = `hsl(${Math.random() * 360}, 70%, 60%)`;
+            }
+
+            update(deltaTime) {
+                const contextMap = new Array(this.contextMapSize).fill(0);
+                const dangerMap = new Array(this.contextMapSize).fill(0);
+
+                // Add interest (prefer current direction)
+                for (let i = 0; i < this.contextMapSize; i++) {
+                    const angle = (i / this.contextMapSize) * Math.PI * 2;
+                    const dir = new Vec2(Math.cos(angle), Math.sin(angle));
+                    const velNorm = this.velocity.clone().normalize();
+                    const dot = Vec2.dot(dir, velNorm);
+                    contextMap[i] = Math.max(0, dot);
+                }
+
+                // Add danger from obstacles
+                for (const obstacle of obstacles) {
+                    const dist = Vec2.distance(this.position, obstacle.position);
+                    const detectionRadius = this.radius + obstacle.radius + 50;
+                    
+                    if (dist < detectionRadius) {
+                        const toObstacle = new Vec2(
+                            obstacle.position.x - this.position.x,
+                            obstacle.position.y - this.position.y
+                        );
+                        
+                        const angle = Math.atan2(toObstacle.y, toObstacle.x);
+                        const normalizedAngle = (angle + Math.PI * 2) % (Math.PI * 2);
+                        const slot = Math.floor((normalizedAngle / (Math.PI * 2)) * this.contextMapSize);
+                        
+                        const danger = 1 - (dist / detectionRadius);
+                        dangerMap[slot] = Math.max(dangerMap[slot], danger);
+                        
+                        // Spread danger to adjacent slots
+                        for (let spread = 1; spread <= 2; spread++) {
+                            const leftSlot = (slot - spread + this.contextMapSize) % this.contextMapSize;
+                            const rightSlot = (slot + spread) % this.contextMapSize;
+                            const spreadDanger = danger * (1 - spread / 3);
+                            
+                            dangerMap[leftSlot] = Math.max(dangerMap[leftSlot], spreadDanger);
+                            dangerMap[rightSlot] = Math.max(dangerMap[rightSlot], spreadDanger);
+                        }
+                    }
+                }
+
+                // Combine interest and danger
+                for (let i = 0; i < this.contextMapSize; i++) {
+                    contextMap[i] = Math.max(0, contextMap[i] - dangerMap[i]);
+                }
+
+                // Find best direction
+                let bestDirection = new Vec2(0, 0);
+                let maxInterest = 0;
+                
+                for (let i = 0; i < this.contextMapSize; i++) {
+                    if (contextMap[i] > maxInterest) {
+                        maxInterest = contextMap[i];
+                        const angle = (i / this.contextMapSize) * Math.PI * 2;
+                        bestDirection = new Vec2(Math.cos(angle), Math.sin(angle));
+                    }
+                }
+
+                if (maxInterest > 0) {
+                    const desiredVelocity = bestDirection.multiply(this.maxSpeed);
+                    const steerForce = new Vec2(
+                        desiredVelocity.x - this.velocity.x,
+                        desiredVelocity.y - this.velocity.y
+                    );
+                    
+                    // Limit steering force
+                    const maxForce = 100;
+                    if (steerForce.length() > maxForce) {
+                        steerForce.normalize().multiply(maxForce);
+                    }
+                    
+                    this.velocity.add(steerForce.multiply(deltaTime));
+                }
+
+                // Limit speed
+                if (this.velocity.length() > this.maxSpeed) {
+                    this.velocity.normalize().multiply(this.maxSpeed);
+                }
+
+                // Update position
+                this.position.add(this.velocity.clone().multiply(deltaTime));
+
+                // Wrap around screen
+                this.wrapAround();
+            }
+
+            wrapAround() {
+                if (this.position.x < 0) this.position.x = canvas.width;
+                if (this.position.x > canvas.width) this.position.x = 0;
+                if (this.position.y < 0) this.position.y = canvas.height;
+                if (this.position.y > canvas.height) this.position.y = 0;
+            }
+
+            draw() {
+                // Draw agent
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(this.position.x, this.position.y, this.radius, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Draw direction indicator
+                ctx.strokeStyle = 'white';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(this.position.x, this.position.y);
+                const vel = this.velocity.clone().normalize().multiply(this.radius);
+                ctx.lineTo(this.position.x + vel.x, this.position.y + vel.y);
+                ctx.stroke();
+            }
+        }
+
+        class Obstacle {
+            constructor(x, y) {
+                this.position = new Vec2(x, y);
+                this.radius = 15 + Math.random() * 25;
+            }
+
+            draw() {
+                ctx.fillStyle = '#e74c3c';
+                ctx.beginPath();
+                ctx.arc(this.position.x, this.position.y, this.radius, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Add border
+                ctx.strokeStyle = '#c0392b';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            }
+        }
+
+        function addAgent() {
+            const x = Math.random() * canvas.width;
+            const y = Math.random() * canvas.height;
+            agents.push(new Agent(x, y));
+        }
+
+        function addObstacle() {
+            const x = Math.random() * canvas.width;
+            const y = Math.random() * canvas.height;
+            obstacles.push(new Obstacle(x, y));
+        }
+
+        function clearAll() {
+            agents = [];
+            obstacles = [];
+        }
+
+        function resetDemo() {
+            clearAll();
+            
+            // Add initial obstacles
+            for (let i = 0; i < 5; i++) {
+                addObstacle();
+            }
+            
+            // Add initial agents
+            for (let i = 0; i < 8; i++) {
+                addAgent();
+            }
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            const deltaTime = 1/60; // 60 FPS
+
+            // Update and draw agents
+            agents.forEach(agent => {
+                agent.update(deltaTime);
+                agent.draw();
+            });
+
+            // Draw obstacles
+            obstacles.forEach(obstacle => {
+                obstacle.draw();
+            });
+
+            animationId = requestAnimationFrame(animate);
+        }
+
+        // Mouse interaction
+        canvas.addEventListener('click', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            if (e.ctrlKey || e.metaKey) {
+                obstacles.push(new Obstacle(x, y));
+            } else {
+                agents.push(new Agent(x, y));
+            }
+        });
+
+        // Initialize demo
+        resetDemo();
+        animate();
+    </script>
+
+    <div class="info">
+        <p><strong>Tips:</strong></p>
+        <ul style="text-align: left; display: inline-block;">
+            <li>Click anywhere to add an agent</li>
+            <li>Ctrl/Cmd + Click to add an obstacle</li>
+            <li>Watch how agents avoid obstacles using context steering</li>
+            <li>Agents prefer to continue in their current direction but will steer around obstacles</li>
+        </ul>
+    </div>
+</body>
+</html>
