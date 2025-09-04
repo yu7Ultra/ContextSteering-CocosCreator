@@ -1,8 +1,6 @@
-import { Component, Node, Vec3, v3, _decorator } from '../../cc-mock';
+import { Component, Node, Vec3, v3 } from '../../cc-mock';
 import { SteeringForce } from './SteeringForce';
 import { SteeringConfig } from './SteeringConfig';
-
-const { ccclass, property } = _decorator;
 
 // Forward declaration to resolve circular dependency
 export interface ISteeringAgent {
@@ -20,12 +18,12 @@ export interface ISteeringAgent {
  * Base class for all steering behaviors
  * Each specific behavior should extend this class and implement calculateSteering()
  */
-@ccclass('SteeringBehavior')
+// // @ccclass('SteeringBehavior')
 export abstract class SteeringBehavior extends Component {
-    @property({ range: [0, 10], slide: true })
+    // // @property({ range: [0, 10], slide: true })
     public weight: number = 1.0;
 
-    @property
+    // @property
     public enabled: boolean = true;
 
     protected agent: ISteeringAgent = null;

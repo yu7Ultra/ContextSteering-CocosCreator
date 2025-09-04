@@ -1,22 +1,21 @@
-import { Node, Vec3, v3, _decorator } from '../../cc-mock';
+import { Node, Vec3, v3 } from '../../cc-mock';
 import { SteeringBehavior } from '../core/SteeringBehavior';
 import { SteeringForce } from '../core/SteeringForce';
 
-const { ccclass, property, menu } = _decorator;
 
 /**
  * Obstacle Avoidance behavior - navigate around static obstacles
  */
-@ccclass('ObstacleAvoidanceBehavior')
-@menu('Steering/Behaviors/Obstacle Avoidance')
+// // @ccclass('ObstacleAvoidanceBehavior')
+// // @menu('Steering/Behaviors/Obstacle Avoidance')
 export class ObstacleAvoidanceBehavior extends SteeringBehavior {
-    @property({ range: [50, 300] })
+    // // @property({ range: [50, 300] })
     public avoidanceDistance: number = 150;
 
-    @property({ range: [20, 150] })
+    // // @property({ range: [20, 150] })
     public maxSeeAhead: number = 100;
 
-    @property({ range: [0.1, 5] })
+    // // @property({ range: [0.1, 5] })
     public avoidanceForceMultiplier: number = 2.0;
 
     calculateSteering(): SteeringForce {

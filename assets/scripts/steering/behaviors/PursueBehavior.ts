@@ -1,23 +1,22 @@
-import { Node, Vec3, v3, _decorator } from '../../cc-mock';
+import { Node, Vec3, v3 } from '../../cc-mock';
 import { SteeringBehavior } from '../core/SteeringBehavior';
 import { SteeringForce } from '../core/SteeringForce';
 import { SteeringAgent } from '../core/SteeringAgent';
 
-const { ccclass, property, menu } = _decorator;
 
 /**
  * Pursue behavior - predicts target movement and intercepts
  */
-@ccclass('PursueBehavior')
-@menu('Steering/Behaviors/Pursue')
+// // @ccclass('PursueBehavior')
+// // @menu('Steering/Behaviors/Pursue')
 export class PursueBehavior extends SteeringBehavior {
-    @property(Node)
+    // // @property(Node)
     public target: Node = null;
 
-    @property({ range: [0, 2] })
+    // // @property({ range: [0, 2] })
     public predictionTime: number = 1.0;
 
-    @property
+    // @property
     public maxPredictionTime: number = 2.0;
 
     calculateSteering(): SteeringForce {

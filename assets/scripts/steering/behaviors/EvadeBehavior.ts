@@ -1,26 +1,25 @@
-import { Node, Vec3, v3, _decorator } from '../../cc-mock';
+import { Node, Vec3, v3 } from '../../cc-mock';
 import { SteeringBehavior } from '../core/SteeringBehavior';
 import { SteeringForce } from '../core/SteeringForce';
 import { SteeringAgent } from '../core/SteeringAgent';
 
-const { ccclass, property, menu } = _decorator;
 
 /**
  * Evade behavior - predicts pursuer movement and escapes
  */
-@ccclass('EvadeBehavior')
-@menu('Steering/Behaviors/Evade')
+// // @ccclass('EvadeBehavior')
+// // @menu('Steering/Behaviors/Evade')
 export class EvadeBehavior extends SteeringBehavior {
-    @property(Node)
+    // // @property(Node)
     public threat: Node = null;
 
-    @property({ range: [0, 2] })
+    // // @property({ range: [0, 2] })
     public predictionTime: number = 1.0;
 
-    @property
+    // @property
     public maxPredictionTime: number = 2.0;
 
-    @property({ range: [0, 500] })
+    // // @property({ range: [0, 500] })
     public panicRadius: number = 200;
 
     calculateSteering(): SteeringForce {

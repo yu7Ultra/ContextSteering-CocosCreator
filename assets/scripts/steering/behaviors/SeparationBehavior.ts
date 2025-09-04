@@ -1,19 +1,18 @@
-import { Vec3, v3, _decorator } from '../../cc-mock';
+import { Vec3, v3 } from '../../cc-mock';
 import { SteeringBehavior } from '../core/SteeringBehavior';
 import { SteeringForce } from '../core/SteeringForce';
 
-const { ccclass, property, menu } = _decorator;
 
 /**
  * Separation behavior - avoid crowding nearby agents
  */
-@ccclass('SeparationBehavior')
-@menu('Steering/Behaviors/Separation')
+// // @ccclass('SeparationBehavior')
+// // @menu('Steering/Behaviors/Separation')
 export class SeparationBehavior extends SteeringBehavior {
-    @property({ range: [10, 200] })
+    // // @property({ range: [10, 200] })
     public separationRadius: number = 50;
 
-    @property({ range: [0.1, 5] })
+    // // @property({ range: [0.1, 5] })
     public separationForceMultiplier: number = 1.0;
 
     calculateSteering(): SteeringForce {

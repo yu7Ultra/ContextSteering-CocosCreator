@@ -1,19 +1,18 @@
-import { Vec3, v3, _decorator } from '../../cc-mock';
+import { Vec3, v3 } from '../../cc-mock';
 import { SteeringBehavior } from '../core/SteeringBehavior';
 import { SteeringForce } from '../core/SteeringForce';
 
-const { ccclass, property, menu } = _decorator;
 
 /**
  * Cohesion behavior - move towards the center of nearby agents
  */
-@ccclass('CohesionBehavior')
-@menu('Steering/Behaviors/Cohesion')
+// // @ccclass('CohesionBehavior')
+// // @menu('Steering/Behaviors/Cohesion')
 export class CohesionBehavior extends SteeringBehavior {
-    @property({ range: [30, 400] })
+    // // @property({ range: [30, 400] })
     public cohesionRadius: number = 100;
 
-    @property({ range: [0.1, 3] })
+    // // @property({ range: [0.1, 3] })
     public cohesionForceMultiplier: number = 1.0;
 
     calculateSteering(): SteeringForce {

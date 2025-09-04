@@ -1,19 +1,18 @@
-import { Vec3, v3, _decorator } from '../../cc-mock';
+import { Vec3, v3 } from '../../cc-mock';
 import { SteeringBehavior } from '../core/SteeringBehavior';
 import { SteeringForce } from '../core/SteeringForce';
 
-const { ccclass, property, menu } = _decorator;
 
 /**
  * Alignment behavior - align movement with nearby agents
  */
-@ccclass('AlignmentBehavior')
-@menu('Steering/Behaviors/Alignment')
+// // @ccclass('AlignmentBehavior')
+// // @menu('Steering/Behaviors/Alignment')
 export class AlignmentBehavior extends SteeringBehavior {
-    @property({ range: [20, 300] })
+    // // @property({ range: [20, 300] })
     public alignmentRadius: number = 80;
 
-    @property({ range: [0.1, 3] })
+    // // @property({ range: [0.1, 3] })
     public alignmentForceMultiplier: number = 1.0;
 
     calculateSteering(): SteeringForce {

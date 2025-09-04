@@ -1,25 +1,24 @@
-import { Node, Vec3, v3, _decorator } from '../../cc-mock';
+import { Node, Vec3, v3 } from '../../cc-mock';
 import { SteeringBehavior } from '../core/SteeringBehavior';
 import { SteeringForce } from '../core/SteeringForce';
 
-const { ccclass, property, menu } = _decorator;
 
 /**
  * Flee behavior - moves the agent away from a target
  */
-@ccclass('FleeBehavior')
-@menu('Steering/Behaviors/Flee')
+// // @ccclass('FleeBehavior')
+// // @menu('Steering/Behaviors/Flee')
 export class FleeBehavior extends SteeringBehavior {
-    @property(Node)
+    // // @property(Node)
     public target: Node = null;
 
-    @property
+    // @property
     public targetPosition: Vec3 = v3(0, 0, 0);
 
-    @property
+    // @property
     public useTargetNode: boolean = true;
 
-    @property({ range: [0, 500] })
+    // // @property({ range: [0, 500] })
     public fleeRadius: number = 200;
 
     calculateSteering(): SteeringForce {

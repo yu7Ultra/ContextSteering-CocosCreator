@@ -1,35 +1,34 @@
-import { Vec3, v3, _decorator } from '../../cc-mock';
+import { Vec3, v3 } from '../../cc-mock';
 import { SteeringBehavior } from '../core/SteeringBehavior';
 import { SteeringForce } from '../core/SteeringForce';
 import { SeparationBehavior } from './SeparationBehavior';
 import { AlignmentBehavior } from './AlignmentBehavior';
 import { CohesionBehavior } from './CohesionBehavior';
 
-const { ccclass, property, menu } = _decorator;
 
 /**
  * Flock behavior - combines separation, alignment, and cohesion
  * This is a composite behavior that automatically manages the three flocking behaviors
  */
-@ccclass('FlockBehavior')
-@menu('Steering/Behaviors/Flock')
+// // @ccclass('FlockBehavior')
+// // @menu('Steering/Behaviors/Flock')
 export class FlockBehavior extends SteeringBehavior {
-    @property({ range: [10, 200] })
+    // // @property({ range: [10, 200] })
     public separationRadius: number = 50;
 
-    @property({ range: [20, 300] })
+    // // @property({ range: [20, 300] })
     public alignmentRadius: number = 80;
 
-    @property({ range: [30, 400] })
+    // // @property({ range: [30, 400] })
     public cohesionRadius: number = 100;
 
-    @property({ range: [0.1, 5], slide: true })
+    // // @property({ range: [0.1, 5], slide: true })
     public separationWeight: number = 2.0;
 
-    @property({ range: [0.1, 5], slide: true })
+    // // @property({ range: [0.1, 5], slide: true })
     public alignmentWeight: number = 1.0;
 
-    @property({ range: [0.1, 5], slide: true })
+    // // @property({ range: [0.1, 5], slide: true })
     public cohesionWeight: number = 1.0;
 
     private separationBehavior: SeparationBehavior;

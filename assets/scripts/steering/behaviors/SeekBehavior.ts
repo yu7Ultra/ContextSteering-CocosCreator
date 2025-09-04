@@ -1,22 +1,13 @@
-import { Node, Vec3, v3, _decorator } from '../../cc-mock';
+import { Node, Vec3, v3 } from '../../cc-mock';
 import { SteeringBehavior } from '../core/SteeringBehavior';
 import { SteeringForce } from '../core/SteeringForce';
-
-const { ccclass, property, menu } = _decorator;
 
 /**
  * Seek behavior - moves the agent towards a target
  */
-@ccclass('SeekBehavior')
-@menu('Steering/Behaviors/Seek')
 export class SeekBehavior extends SteeringBehavior {
-    @property(Node)
     public target: Node = null;
-
-    @property
     public targetPosition: Vec3 = v3(0, 0, 0);
-
-    @property
     public useTargetNode: boolean = true;
 
     calculateSteering(): SteeringForce {

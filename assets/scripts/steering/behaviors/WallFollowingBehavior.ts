@@ -1,25 +1,24 @@
-import { Node, Vec3, v3, _decorator } from '../../cc-mock';
+import { Node, Vec3, v3 } from '../../cc-mock';
 import { SteeringBehavior } from '../core/SteeringBehavior';
 import { SteeringForce } from '../core/SteeringForce';
 
-const { ccclass, property, menu } = _decorator;
 
 /**
  * Wall Following behavior - follow along walls and boundaries
  */
-@ccclass('WallFollowingBehavior')
-@menu('Steering/Behaviors/Wall Following')
+// // @ccclass('WallFollowingBehavior')
+// // @menu('Steering/Behaviors/Wall Following')
 export class WallFollowingBehavior extends SteeringBehavior {
-    @property({ range: [10, 100] })
+    // // @property({ range: [10, 100] })
     public wallFollowDistance: number = 30;
 
-    @property({ range: [10, 200] })
+    // // @property({ range: [10, 200] })
     public wallFollowForce: number = 50;
 
-    @property({ range: [50, 300] })
+    // // @property({ range: [50, 300] })
     public wallDetectionDistance: number = 100;
 
-    @property
+    // @property
     public clockwise: boolean = true;
 
     calculateSteering(): SteeringForce {

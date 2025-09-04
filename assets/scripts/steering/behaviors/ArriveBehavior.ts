@@ -1,28 +1,27 @@
-import { Node, Vec3, v3, _decorator } from '../../cc-mock';
+import { Node, Vec3, v3 } from '../../cc-mock';
 import { SteeringBehavior } from '../core/SteeringBehavior';
 import { SteeringForce } from '../core/SteeringForce';
 
-const { ccclass, property, menu } = _decorator;
 
 /**
  * Arrive behavior - moves towards target but decelerates when approaching
  */
-@ccclass('ArriveBehavior')
-@menu('Steering/Behaviors/Arrive')
+// // @ccclass('ArriveBehavior')
+// // @menu('Steering/Behaviors/Arrive')
 export class ArriveBehavior extends SteeringBehavior {
-    @property(Node)
+    // // @property(Node)
     public target: Node = null;
 
-    @property
+    // @property
     public targetPosition: Vec3 = v3(0, 0, 0);
 
-    @property
+    // @property
     public useTargetNode: boolean = true;
 
-    @property({ range: [5, 100] })
+    // // @property({ range: [5, 100] })
     public arrivalRadius: number = 20;
 
-    @property({ range: [10, 200] })
+    // // @property({ range: [10, 200] })
     public slowDownRadius: number = 100;
 
     calculateSteering(): SteeringForce {

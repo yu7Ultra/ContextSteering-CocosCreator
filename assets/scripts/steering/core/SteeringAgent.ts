@@ -1,29 +1,28 @@
-import { Component, Node, Vec3, v3, _decorator } from '../../cc-mock';
+import { Component, Node, Vec3, v3 } from '../../cc-mock';
 import { SteeringForce } from './SteeringForce';
 import { SteeringConfig, DEFAULT_STEERING_CONFIG } from './SteeringConfig';
 import { ISteeringAgent } from './SteeringBehavior';
 
-const { ccclass, property, menu } = _decorator;
 
 /**
  * Main steering agent that combines multiple steering behaviors
  */
-@ccclass('SteeringAgent')
-@menu('Steering/Steering Agent')
+// // @ccclass('SteeringAgent')
+// // @menu('Steering/Steering Agent')
 export class SteeringAgent extends Component implements ISteeringAgent {
-    @property({ range: [0, 500] })
+    // // @property({ range: [0, 500] })
     public maxSpeed: number = DEFAULT_STEERING_CONFIG.maxSpeed;
 
-    @property({ range: [0, 200] })
+    // // @property({ range: [0, 200] })
     public maxForce: number = DEFAULT_STEERING_CONFIG.maxForce;
 
-    @property({ range: [0.1, 5] })
+    // // @property({ range: [0.1, 5] })
     public mass: number = DEFAULT_STEERING_CONFIG.mass;
 
-    @property({ range: [5, 50] })
+    // // @property({ range: [5, 50] })
     public radius: number = 20;
 
-    @property
+    // @property
     public showDebugInfo: boolean = false;
 
     // Public velocity for access by behaviors

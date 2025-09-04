@@ -1,8 +1,7 @@
-import { Vec3, v3, _decorator } from '../../cc-mock';
+import { Vec3, v3 } from '../../cc-mock';
 import { SteeringBehavior } from '../core/SteeringBehavior';
 import { SteeringForce } from '../core/SteeringForce';
 
-const { ccclass, property, menu } = _decorator;
 
 /**
  * Represents a path point
@@ -15,19 +14,19 @@ export interface PathPoint {
 /**
  * Path Following behavior - follow a predefined path or waypoints
  */
-@ccclass('PathFollowingBehavior')
-@menu('Steering/Behaviors/Path Following')
+// // @ccclass('PathFollowingBehavior')
+// // @menu('Steering/Behaviors/Path Following')
 export class PathFollowingBehavior extends SteeringBehavior {
-    @property({ range: [10, 100] })
+    // // @property({ range: [10, 100] })
     public pathRadius: number = 20;
 
-    @property({ range: [20, 100] })
+    // // @property({ range: [20, 100] })
     public seekRadius: number = 50;
 
-    @property
+    // @property
     public loopPath: boolean = true;
 
-    @property
+    // @property
     public reverseDirection: boolean = false;
 
     private path: PathPoint[] = [];

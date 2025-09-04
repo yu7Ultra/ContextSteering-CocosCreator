@@ -5,39 +5,241 @@ A comprehensive **Cocos Creator 3.8 plugin library** for implementing contextual
 
 - **🧩 Component-based development** - Modular, reusable steering behavior components
 - **⚙️ Flexible configuration** - Easy-to-use configuration system for fine-tuning behaviors  
-- **🎯 Context steering algorithm** - Advanced steering using directional context maps
+- **🎯 12 Complete Steering Behaviors** - All fundamental steering behaviors implemented
 - **📘 Pure TypeScript implementation** - Type-safe, maintainable code
 - **⚡ High performance** - Optimized for real-time game applications
+- **🔧 Weighted Behavior Combination** - Mix multiple behaviors with configurable weights
 
 ## 🎮 Implemented Steering Behaviors
 
-### Context-Based Navigation
-- **Context Steering** - 16-directional context mapping for intelligent navigation
-- **Obstacle Avoidance** - Dynamic danger mapping with spatial awareness
-- **Direction Persistence** - Agents prefer to maintain current movement direction
-- **Smooth Steering** - Force-based movement with realistic physics constraints
+### Basic Movement Behaviors
+1. **Seek** - Move towards a target position or node
+2. **Flee** - Move away from a threat with configurable panic radius
+3. **Arrive** - Move towards target with smooth deceleration on approach
+4. **Pursue** - Predict target movement and intercept moving targets
+5. **Evade** - Predict pursuer movement and escape from threats
 
-### Technical Implementation Details
-- **16-Direction Context Maps** - Each agent evaluates movement options in 22.5° increments
-- **Danger Map Integration** - Obstacles create danger fields that influence steering decisions
-- **Adaptive Detection Range** - 3x agent radius for obstacle detection with falloff
-- **Force Limiting** - Steering forces are capped for realistic movement behavior
+### Group Behaviors (Flocking)
+6. **Separation** - Avoid crowding nearby agents
+7. **Alignment** - Align movement direction with nearby agents
+8. **Cohesion** - Move towards the center of nearby agents
+9. **Flock** - Combined separation, alignment, and cohesion behaviors
 
-## 🤖 Emergent Steering Behaviors
+### Navigation Behaviors
+10. **Obstacle Avoidance** - Navigate around static obstacles using lookahead
+11. **Wall Following** - Follow along walls and boundaries at specified distance
+12. **Path Following** - Follow predefined paths with waypoints and custom radii
 
-The context steering system naturally produces several classic steering behaviors:
+## 🚀 Quick Start
 
-### Primary Behaviors
-- **Wander** - Agents exhibit natural wandering when no obstacles are present
-- **Obstacle Avoidance** - Dynamic avoidance of static environmental hazards
-- **Momentum Conservation** - Preference for maintaining current direction reduces oscillation
-- **Smooth Navigation** - Gradual direction changes create natural-looking movement patterns
+### Basic Usage
 
-### Emergent Group Behaviors
-When multiple agents are present, the system exhibits:
-- **Implicit Separation** - Agents naturally avoid crowding through obstacle avoidance mechanics
-- **Flow Dynamics** - Multiple agents create natural traffic flow patterns
-- **Adaptive Spacing** - Agent density self-regulates based on available space
+```typescript
+import { SteeringAgent, SeekBehavior, FlockBehavior } from './steering';
+
+// Create an agent that seeks a target
+const agent = node.addComponent(SteeringAgent);
+const seek = node.addComponent(SeekBehavior);
+seek.setTargetNode(targetNode);
+seek.weight = 1.0;
+
+// Create a flocking agent
+const flockAgent = node.addComponent(SteeringAgent);
+const flock = node.addComponent(FlockBehavior);
+flock.separationWeight = 2.0;
+flock.alignmentWeight = 1.0;
+flock.cohesionWeight = 1.0;
+```
+
+### Advanced Configuration
+
+```typescript
+// Complex AI agent with multiple behaviors
+const agent = node.addComponent(SteeringAgent);
+agent.maxSpeed = 200;
+agent.maxForce = 150;
+agent.radius = 25;
+
+// Seek behavior
+const seek = node.addComponent(SeekBehavior);
+seek.setTargetNode(target);
+seek.weight = 0.8;
+
+// Obstacle avoidance (high priority)
+const avoid = node.addComponent(ObstacleAvoidanceBehavior);
+avoid.weight = 3.0;
+
+// Flocking behavior
+const flock = node.addComponent(FlockBehavior);
+flock.weight = 1.2;
+```
+
+## 📁 Project Structure
+
+### Modern Steering System (NEW)
+- `assets/scripts/steering/core/` - Core steering system
+  - `SteeringAgent.ts` - Main agent component
+  - `SteeringBehavior.ts` - Base behavior class
+  - `SteeringForce.ts` - Force representation
+  - `SteeringConfig.ts` - Configuration interfaces
+- `assets/scripts/steering/behaviors/` - Individual behavior implementations
+  - All 12 steering behaviors as separate components
+- `assets/scripts/steering/utils/` - Utility functions
+- `assets/scripts/steering/index.ts` - Main library exports
+
+### Examples and Integration
+- `assets/scripts/ModernSteeringManager.ts` - Comprehensive demo manager
+- `assets/scripts/SteeringBehaviorExamples.ts` - Individual behavior examples
+- `assets/scripts/tests/SteeringBehaviorTest.ts` - Integration tests
+
+### Legacy System (Context Steering)
+- `assets/scripts/Agent.ts` - Original context steering implementation
+- `assets/scripts/ContextSteeringManager.ts` - Original scene manager
+
+### Standalone Demo
+- `demo.html` - Interactive browser demo showcasing behaviors
+
+## 🎯 Behavior Examples
+
+### Predator-Prey System
+```typescript
+// Predator
+const pursuer = predatorNode.addComponent(PursueBehavior);
+pursuer.setTarget(preyNode);
+pursuer.predictionTime = 1.5;
+
+// Prey
+const evader = preyNode.addComponent(EvadeBehavior);
+evader.setThreat(predatorNode);
+evader.panicRadius = 150;
+```
+
+### Path Following
+```typescript
+const pathFollower = node.addComponent(PathFollowingBehavior);
+pathFollower.setPath([
+    v3(0, 0, 0),
+    v3(100, 0, 0),
+    v3(100, 100, 0),
+    v3(0, 100, 0)
+]);
+pathFollower.loopPath = true;
+
+// Or create circular path
+pathFollower.createCircularPath(v3(0, 0, 0), 100, 8);
+```
+
+### Crowd Simulation
+```typescript
+const agent = node.addComponent(SteeringAgent);
+
+// Add flocking behavior
+const flock = node.addComponent(FlockBehavior);
+flock.separationWeight = 2.5;  // Avoid crowding
+flock.alignmentWeight = 1.5;   // Follow crowd direction
+flock.cohesionWeight = 1.0;    // Stay with group
+
+// Add obstacle avoidance for safety
+const avoid = node.addComponent(ObstacleAvoidanceBehavior);
+avoid.weight = 3.0; // Highest priority
+```
+
+## ⚙️ Configuration
+
+### Agent Parameters
+```typescript
+const agent = node.addComponent(SteeringAgent);
+agent.maxSpeed = 200;        // Maximum movement speed
+agent.maxForce = 100;        // Maximum steering force
+agent.mass = 1.0;           // Agent mass (affects acceleration)
+agent.radius = 20;          // Agent size for collision detection
+agent.showDebugInfo = true; // Enable debug visualization
+```
+
+### Behavior Weights (Recommended)
+```typescript
+const weights = {
+    seek: 1.0,
+    flee: 1.5,
+    arrive: 1.0,
+    pursue: 1.2,
+    evade: 1.8,
+    separation: 2.0,        // Higher for safety
+    alignment: 1.0,
+    cohesion: 1.0,
+    obstacleAvoidance: 3.0, // Highest priority
+    wallFollowing: 1.5,
+    pathFollowing: 2.0
+};
+```
+
+## 🔧 Architecture
+
+The system follows a modular, component-based architecture:
+
+1. **SteeringAgent** - Core component that manages movement and combines behaviors
+2. **SteeringBehavior** - Base class for all steering behaviors
+3. **Individual Behaviors** - Specific behavior implementations extending the base class
+4. **Weighted Combination** - Multiple behaviors contribute forces based on their weights
+5. **Force Integration** - Combined forces are applied to agent movement
+
+## 📋 Requirements
+
+- Cocos Creator 3.8+
+- TypeScript support enabled
+- Node.js (for compilation)
+
+## 📖 Documentation
+
+- [Complete Behavior Documentation](STEERING_BEHAVIORS.md) - Detailed guide for all 12 behaviors
+- [.copilot-instructions.md](.copilot-instructions.md) - Development guidelines and architecture
+- Inline TypeScript documentation for all classes and methods
+
+## 🧪 Testing
+
+Run the integration tests:
+
+```typescript
+import SteeringBehaviorTest from './tests/SteeringBehaviorTest';
+SteeringBehaviorTest.runAllTests();
+```
+
+## 🎨 Examples
+
+See the complete examples in:
+- `ModernSteeringManager.ts` - Interactive demo with multiple agent types
+- `SteeringBehaviorExamples.ts` - Individual behavior demonstrations
+- `demo.html` - Browser-based interactive demo
+
+## 🤝 Contributing
+
+This project uses GitHub Copilot for development assistance. Please refer to the Copilot instructions for coding standards and best practices.
+
+## 📄 License
+
+*License information to be added*
+
+## What is Context Steering?
+
+Context steering is an advanced steering behavior technique used in game development for autonomous agent movement. The original implementation in this project provides smooth, intelligent navigation by:
+
+1. **Context Maps**: Creating directional interest maps that evaluate movement options
+2. **Obstacle Avoidance**: Using danger maps to avoid collisions
+3. **Behavior Combination**: Blending multiple steering behaviors seamlessly
+
+## Legacy Implementation
+
+The original context steering system is preserved in:
+- `assets/scripts/Agent.ts` - 16-directional context mapping with obstacle avoidance
+- `assets/scripts/ContextSteeringManager.ts` - Scene management for the original system
+
+## Modern vs Legacy
+
+- **Legacy System**: Context steering with 16-directional mapping
+- **Modern System**: 12 complete steering behaviors with component-based architecture
+- **Both Systems**: Can be used together or separately based on project needs
+
+This implementation demonstrates both classic steering behaviors and advanced context steering techniques for creating believable autonomous movement in games and simulations.
 
 ## 📋 Requirements
 
