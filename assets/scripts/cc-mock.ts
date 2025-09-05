@@ -125,7 +125,8 @@ export class Node {
 
 export const _decorator = {
     ccclass: (name: string) => (target: any) => target,
-    property: (...args: any[]) => (target: any, key?: string) => {}
+    property: (...args: any[]) => () => {},
+    menu: (path: string) => (target: any) => target
 };
 
 // Mock additional classes
